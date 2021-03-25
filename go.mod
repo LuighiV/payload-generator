@@ -1,5 +1,3 @@
-module luighiv/generator
+module github.com/LuighiV/payload-generator
 
 go 1.16
-
-replace luighiv/generator => ./

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"luighiv/generator"
+	"github.com/LuighiV/payload-generator"
 )
 
 func main() {
