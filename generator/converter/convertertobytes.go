@@ -6,6 +6,6 @@ import (
 
 func ConvertIntToBytes(value int) []byte {
 	bs := make([]byte, 4)
-	binary.PutVarint(bs, int64(value))
+	binary.LittleEndian.PutUint32(bs, uint32(value))
 	return bs
 }

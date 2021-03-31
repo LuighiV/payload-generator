@@ -70,6 +70,8 @@ func NewData(opts ...DataOption) (*Data, error) {
 	}
 
 	fmt.Println(d.temperature)
+	fmt.Println(d.humidity)
+	fmt.Println(d.pressure)
 	LoadPayload()(d)
 	return d, nil
 }

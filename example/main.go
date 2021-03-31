@@ -9,9 +9,12 @@ func main() {
 	fmt.Println("Hello, World!")
 
 	gen, err := generator.NewGenerator(
-		39.0, 0.5,
-		80.0, 5,
-		1000.0, 100,
+		39.0,
+		80.0,
+		1000.0,
+		0.5,
+		5,
+		100,
 	)
 	if err != nil {
 		panic(err)
