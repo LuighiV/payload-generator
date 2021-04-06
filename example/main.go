@@ -28,7 +28,7 @@ func main() {
 	generator.Generate(generator.Random)(gen)
 	fmt.Println(generator.GetPayload(gen))
 
-	generator.Generate(generator.OpenWheater)(gen)
+	generator.Generate(generator.OpenWeather)(gen)
 	fmt.Println(generator.GetPayload(gen))
 
 }

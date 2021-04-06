@@ -25,7 +25,7 @@ type GeneratorOption func(*Generator) error
 
 const (
 	Random      GeneratorType = iota
-	OpenWheater GeneratorType = iota
+	OpenWeather GeneratorType = iota
 )
 
 func NewGenerator(opts ...GeneratorOption) (*Generator, error) {
@@ -91,7 +91,7 @@ func Generate(t GeneratorType) GeneratorOption {
 				panic(err)
 			}
 			gen.payload = random.GetPayload(d)
-		} else if t == OpenWheater {
+		} else if t == OpenWeather {
 			d, err := openweather.NewData(
 				openweather.GetOpenDataByCityName(&gen.ow_config),
 			)
