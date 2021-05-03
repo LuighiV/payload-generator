@@ -14,6 +14,15 @@ func GenerateRandom(basevalue float64, rangevariation float64) float64 {
 	return basevalue + rand.Float64()*rangevariation - rangevariation/2
 }
 
+type Base_Values struct {
+	temperature_base      float64
+	humidity_base         float64
+	pressure_base         float64
+	temperature_variation float64
+	humidity_variation    float64
+	pressure_variation    float64
+}
+
 type Data struct {
 	temperature int
 	humidity    int

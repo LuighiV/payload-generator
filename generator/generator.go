@@ -6,16 +6,8 @@ import (
 	"github.com/LuighiV/payload-generator/generator/random"
 )
 
-type Base_Values struct {
-	temperature_base      float64
-	humidity_base         float64
-	pressure_base         float64
-	temperature_variation float64
-	humidity_variation    float64
-	pressure_variation    float64
-}
 type Generator struct {
-	random_base Base_Values
+	random_base random.Base_Values
 	ow_config   openweather.OWConfig
 	payload     []byte
 }
