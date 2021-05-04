@@ -9,11 +9,15 @@ import (
 	"time"
 )
 
+// GenerateRandom returns a random value receiving the a base value and
+// variation value which determines the range of variation.
 func GenerateRandom(basevalue float64, rangevariation float64) float64 {
 	rand.Seed(time.Now().UnixNano())
 	return basevalue + rand.Float64()*rangevariation - rangevariation/2
 }
 
+// A Base_Values to introduce base values and variation values for each
+// parameter (temperature, pressure and humidity)
 type Base_Values struct {
 	temperature_base      float64
 	humidity_base         float64
@@ -23,6 +27,28 @@ type Base_Values struct {
 	pressure_variation    float64
 }
 
+func NewBaseValues(
+	temperature_base float64,
+	humidity_base float64,
+	pressure_base float64,
+	temperature_variation float64,
+	humidity_variation float64,
+	pressure_variation float64,
+) (*Base_Values, error) {
+
+	base_values := Base_Values{
+		temperature_base,
+		humidity_base,
+		pressure_base,
+		temperature_variation,
+		humidity_variation,
+		pressure_variation,
+	}
+	return &base_values, nil
+}
+
+// Data holds the information of the parameters converted to integers and the
+// payload in bytes
 type Data struct {
 	temperature int
 	humidity    int
@@ -30,8 +56,10 @@ type Data struct {
 	payload     []byte
 }
 
+// DataOption is the kind of option to be applied to the Data structure
 type DataOption func(*Data) error
 
+// WithTemperature returns a temperature value with a base and variation values
 func WithTemperature(base float64, variation float64) DataOption {
 	return func(d *Data) error {
 		d.temperature = int(GenerateRandom(base, variation) * 100)
@@ -39,6 +67,7 @@ func WithTemperature(base float64, variation float64) DataOption {
 	}
 }
 
+// WithHumidity returns a humidity value with a base and variation values
 func WithHumidity(base float64, variation float64) DataOption {
 	return func(d *Data) error {
 		d.humidity = int(GenerateRandom(base, variation) * 100)
@@ -46,6 +75,7 @@ func WithHumidity(base float64, variation float64) DataOption {
 	}
 }
 
+// WithPressure returns a pressure value with a base and variation values
 func WithPressure(base float64, variation float64) DataOption {
 	return func(d *Data) error {
 		d.pressure = int(GenerateRandom(base, variation) * 100)
@@ -53,10 +83,23 @@ func WithPressure(base float64, variation float64) DataOption {
 	}
 }
 
+func WithBaseValues(base *Base_Values) DataOption {
+	return func(d *Data) error {
+
+		WithTemperature(base.temperature_base, base.temperature_variation)(d)
+		WithHumidity(base.humidity_base, base.humidity_variation)(d)
+		WithPressure(base.pressure_base, base.pressure_variation)(d)
+		return nil
+	}
+}
+
+// GetPayload returns the payload in bytes
 func GetPayload(d *Data) []byte {
 	return d.payload
 }
 
+// LoadPayload generates the payload based on the temperature,
+// humidity and pressure values
 func LoadPayload() DataOption {
 	return func(d *Data) error {
 		bs := make([]byte, 12)
@@ -68,6 +111,8 @@ func LoadPayload() DataOption {
 	}
 }
 
+// NewData is a function to create the data structure and apply options to
+// generate the parameters of temperature, pressure and humidity
 func NewData(opts ...DataOption) (*Data, error) {
 
 	d := &Data{}

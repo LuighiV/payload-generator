@@ -10,6 +10,9 @@ import (
 	"net/http"
 )
 
+// Data holds the information of the parameters received from the API of
+// OpenWeather and the corresponding converter value of the
+// payload in bytes
 type Data struct {
 	latitude    float64
 	longitude   float64
@@ -20,11 +23,14 @@ type Data struct {
 	payload     []byte
 }
 
+// OWConfig has the APIKey to connect to the OW service and the city wher those
+// data come from
 type OWConfig struct {
 	apikey string
 	city   string
 }
 
+// Message holds the data obtained from the OpenWeather API
 // Example response
 //{
 //    "coord": {
@@ -119,8 +125,10 @@ type Message struct {
 	Cod      int    `json:"cod"`
 }
 
+// DataOption is the kind of option to be applied to the Data structure
 type DataOption func(*Data) error
 
+// NewOWConfig creates a new configuration to connect to the OW service
 func NewOWConfig(apikey string, city string) (*OWConfig, error) {
 
 	owconf := OWConfig{
@@ -130,6 +138,8 @@ func NewOWConfig(apikey string, city string) (*OWConfig, error) {
 	return &owconf, nil
 }
 
+// GetOpenDataByCityName obtains data taking the option as input to get
+// information
 func GetOpenDataByCityName(owconf *OWConfig) DataOption {
 	return func(d *Data) error {
 
@@ -157,10 +167,12 @@ func GetOpenDataByCityName(owconf *OWConfig) DataOption {
 
 }
 
+// GetPayload obtains the value of payload in bytes
 func GetPayload(d *Data) []byte {
 	return d.payload
 }
 
+// LoadPayload generates the payload based on the data obtained from OW
 func LoadPayload() DataOption {
 	return func(d *Data) error {
 		bs := make([]byte, 24)
@@ -175,6 +187,8 @@ func LoadPayload() DataOption {
 	}
 }
 
+// NewData is a function to create the data structure based on the options
+// applied
 func NewData(opts ...DataOption) (*Data, error) {
 
 	d := &Data{}

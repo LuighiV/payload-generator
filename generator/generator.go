@@ -6,20 +6,26 @@ import (
 	"github.com/LuighiV/payload-generator/generator/random"
 )
 
+// Generator holds the parameters required to generate Data and the paylod
+// generated
 type Generator struct {
 	random_base random.Base_Values
 	ow_config   openweather.OWConfig
 	payload     []byte
 }
 
+// GeneratorType is an alias for the enumeration value of the generator
 type GeneratorType int
+
+// GeneratorOption holds the function option for generator
 type GeneratorOption func(*Generator) error
 
 const (
-	Random      GeneratorType = iota
-	OpenWeather GeneratorType = iota
+	Random      GeneratorType = iota // Random generator type
+	OpenWeather GeneratorType = iota // OpenWeather generator type
 )
 
+// NewGenerator creates a new generator structure
 func NewGenerator(opts ...GeneratorOption) (*Generator, error) {
 	gen := &Generator{}
 
@@ -32,6 +38,7 @@ func NewGenerator(opts ...GeneratorOption) (*Generator, error) {
 	return gen, nil
 }
 
+// WithRandomBase creates the structure for random values
 func WithRandomBase(
 	temperature_base float64,
 	humidity_base float64,
@@ -42,21 +49,26 @@ func WithRandomBase(
 ) GeneratorOption {
 	return func(gen *Generator) error {
 
-		gen.random_base = Base_Values{
+		basevalues, err := random.NewBaseValues(
 			temperature_base,
 			humidity_base,
 			pressure_base,
 			temperature_variation,
 			humidity_variation,
 			pressure_variation,
+		)
+		if err != nil {
+			panic(err)
 		}
 
+		gen.random_base = *basevalues
 		return nil
 
 	}
 
 }
 
+// WithOWeatherConfig creates the structure with OW options
 func WithOWeatherConfig(apikey string, city string) GeneratorOption {
 	return func(gen *Generator) error {
 		owconf, err := openweather.NewOWConfig(apikey, city)
@@ -69,14 +81,13 @@ func WithOWeatherConfig(apikey string, city string) GeneratorOption {
 
 }
 
+// Generate the payload depending on the type of generator
 func Generate(t GeneratorType) GeneratorOption {
 	return func(gen *Generator) error {
 
 		if t == Random {
 			d, err := random.NewData(
-				random.WithTemperature(gen.random_base.temperature_base, gen.random_base.temperature_variation),
-				random.WithHumidity(gen.random_base.humidity_base, gen.random_base.humidity_variation),
-				random.WithPressure(gen.random_base.pressure_base, gen.random_base.pressure_variation),
+				random.WithBaseValues(&gen.random_base),
 			)
 
 			if err != nil {
@@ -97,6 +108,7 @@ func Generate(t GeneratorType) GeneratorOption {
 	}
 }
 
+// GetPayload returns the payload in bytes array format
 func GetPayload(gen *Generator) []byte {
 	return gen.payload
 }
