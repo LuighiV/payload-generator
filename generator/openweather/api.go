@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/LuighiV/payload-generator/generator/converter"
+	"log"
 	"net/http"
 )
 
@@ -145,13 +146,15 @@ func GetOpenDataByCityName(owconf *OWConfig) DataOption {
 
 		r, err := http.Get("https://api.openweathermap.org/data/2.5/weather?q=" + owconf.city + "&appid=" + owconf.apikey)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
+			return err
 		}
 
 		var msg Message
 		err = json.NewDecoder(r.Body).Decode(&msg)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
+			return err
 		}
 
 		d.temperature = int((msg.Main.Temp - 273) * 100)
